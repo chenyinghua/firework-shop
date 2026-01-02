@@ -92,7 +92,16 @@ function renderProductGrid(products) {
 
     productGrid.innerHTML = products.map(product => {
         // Build relative paths
-        const imagePath = product.image_filename ? `/image/commodity/${product.image_filename}` : 'https://via.placeholder.com/300x200?text=Fireworks';
+        let imagePath = 'https://via.placeholder.com/300x200?text=Fireworks';
+        let originalPath = '';
+
+        if (product.image_filename) {
+            const parts = product.image_filename.split('.');
+            const ext = parts.pop();
+            const name = parts.join('.');
+            imagePath = `/image/commodity/${name}_thumb.${ext}`;
+            originalPath = `/image/commodity/${product.image_filename}`;
+        }
         
         // Conditional QR Code
         let qrHtml = '';
@@ -104,7 +113,7 @@ function renderProductGrid(products) {
         return `
         <div class="product-card" data-id="${product.id}">
             <div class="card-img-wrapper">
-                <img src="${imagePath}" alt="${product.name}" loading="lazy" decoding="async" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                <img src="${imagePath}" data-original-src="${originalPath}" alt="${product.name}" loading="lazy" decoding="async" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
                 ${qrHtml}
             </div>
             <div class="card-body">
@@ -124,7 +133,9 @@ function renderProductGrid(products) {
     // Add image preview listeners
     document.querySelectorAll('.card-img-wrapper img').forEach(img => {
         img.addEventListener('click', (e) => {
-            const src = e.target.src;
+            const originalSrc = e.target.getAttribute('data-original-src');
+            const src = originalSrc || e.target.src.replace('_thumb', '');
+            
             const card = e.target.closest('.product-card');
             const id = card.dataset.id;
             
