@@ -29,6 +29,8 @@ const qrProductName = document.getElementById('qr-product-name');
 // Image Preview Elements
 const imagePreviewModal = document.getElementById('image-preview-modal');
 const previewLargeImg = document.getElementById('preview-large-img');
+const saveResultModal = document.getElementById('save-result-modal');
+const generatedResultImg = document.getElementById('generated-result-img');
 let imgPanzoom = null;
 
 // Mobile Cart Elements
@@ -373,10 +375,11 @@ function setupEventListeners() {
             backgroundColor: '#ffffff',
             useCORS: true // Attempt to load external images if any
         }).then(canvas => {
-            const link = document.createElement('a');
-            link.download = `烟花订单_${new Date().getTime()}.png`;
-            link.href = canvas.toDataURL();
-            link.click();
+            const imgData = canvas.toDataURL('image/png');
+            
+            // Show result in modal for Long Press (WeChat compatible)
+            generatedResultImg.src = imgData;
+            saveResultModal.style.display = 'flex';
             
             // 4. Cleanup & Restore
             document.body.removeChild(clone);
@@ -435,6 +438,7 @@ window.openQrModal = function(filename, name) {
 window.closeAllModals = function() {
     orderModal.style.display = 'none';
     qrModal.style.display = 'none';
+    if (saveResultModal) saveResultModal.style.display = 'none';
     if (imagePreviewModal) {
         imagePreviewModal.style.display = 'none';
         if (imgPanzoom) {

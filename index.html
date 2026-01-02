@@ -166,13 +166,23 @@
   <div id="image-preview-modal" class="modal">
     <span id="close-image-preview" class="close-modal" onclick="closeAllModals()"
       style="position: fixed; top: 20px; right: 20px; color: white; z-index: 2000; font-size: 40px; cursor: pointer;">&times;</span>
-    <div class="modal-content"
-      style="background: transparent; box-shadow: none; border: none; text-align: center; width: 100%; height: 100%; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
-      <img id="preview-large-img" src="" alt="Preview" style="pointer-events: auto; max-width: 95%; max-height: 95%;">
-    </div>
-  </div>
-
-  <script type="module" src="app.js"></script>
+          <div class="modal-content" style="background: transparent; box-shadow: none; border: none; text-align: center; width: 100%; height: 100%; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
+              <img id="preview-large-img" src="" alt="Preview" style="pointer-events: auto; max-width: 95%; max-height: 95%;">
+          </div>
+      </div>
+    
+      <!-- Save Result Modal (For WeChat/Mobile) -->
+      <div id="save-result-modal" class="modal" style="display: none; align-items: center; justify-content: center; background-color: rgba(0,0,0,0.9);">
+          <span class="close-modal" onclick="closeAllModals()" style="position: fixed; top: 20px; right: 20px; color: white; z-index: 2000; font-size: 40px; cursor: pointer;">&times;</span>
+          <div class="modal-content" style="background: transparent; border: none; box-shadow: none; text-align: center; width: 100%; max-height: 90vh; overflow-y: auto;">
+              <p style="color: #fff; font-size: 1.2rem; margin-bottom: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                  <i class="fa-solid fa-hand-pointer"></i> 请长按图片保存到相册
+              </p>
+              <img id="generated-result-img" src="" alt="Result" style="max-width: 90%; border-radius: 8px; box-shadow: 0 0 20px rgba(255,255,255,0.1);">
+          </div>
+      </div>
+    
+      <script type="module" src="app.js"></script>
 </body>
 
 </html>
