@@ -337,6 +337,9 @@ function setupEventListeners() {
         const random = Math.floor(1000 + Math.random() * 9000);
         const orderId = `ORD-${timestamp}-${ms}-${random}`;
         
+        // Store Order ID for saving later (PC flow)
+        orderModal.dataset.orderId = orderId;
+        
         document.getElementById('order-date').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
         document.getElementById('order-id-display').textContent = orderId;
 
@@ -372,7 +375,11 @@ function setupEventListeners() {
                 saveResultModal.style.display = 'flex';
                 
                 // Save to DB silently
-                supabase.from('orders').insert({ items: items, total_price: total }).then(()=>{});
+                supabase.from('orders').insert({ 
+                    items: items, 
+                    total_price: total,
+                    order_no: orderId // Save the generated Order ID
+                }).then(()=>{});
 
             } catch (err) {
                 alert('生成失败');
@@ -399,11 +406,13 @@ function setupEventListeners() {
         // Save to DB
         const items = Object.values(currentCart);
         const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const orderNo = orderModal.dataset.orderId;
         
         try {
             await supabase.from('orders').insert({
                 items: items,
-                total_price: total
+                total_price: total,
+                order_no: orderNo
             });
         } catch (e) {
             console.error("Failed to save order history", e);
