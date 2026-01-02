@@ -297,14 +297,14 @@ function setupEventListeners() {
     if (cartOverlay) cartOverlay.addEventListener('click', () => toggleCart(false));
     
     // Order Generation
-    generateOrderBtn.addEventListener('click', () => {
+    generateOrderBtn.addEventListener('click', async () => {
         const items = Object.values(currentCart);
         if (items.length === 0) {
             alert('请先添加商品到选货单');
             return;
         }
 
-        // Populate Modal
+        // 1. Prepare Data
         const tbody = document.getElementById('order-table-body');
         tbody.innerHTML = items.map(item => `
             <tr>
@@ -319,16 +319,61 @@ function setupEventListeners() {
         document.getElementById('order-sheet-total').textContent = `¥${total.toFixed(2)}`;
         
         const now = new Date();
-        // Format: ORD-YYYYMMDD-HHMMSS-MS-RAND (e.g., ORD-20231001-123005-123-4567)
         const timestamp = `${now.getFullYear()}${(now.getMonth()+1).toString().padStart(2,'0')}${now.getDate().toString().padStart(2,'0')}-${now.getHours().toString().padStart(2,'0')}${now.getMinutes().toString().padStart(2,'0')}${now.getSeconds().toString().padStart(2,'0')}`;
         const ms = now.getMilliseconds().toString().padStart(3, '0');
-        const random = Math.floor(1000 + Math.random() * 9000); // 4-digit random number
+        const random = Math.floor(1000 + Math.random() * 9000);
         const orderId = `ORD-${timestamp}-${ms}-${random}`;
         
         document.getElementById('order-date').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
         document.getElementById('order-id-display').textContent = orderId;
 
-        orderModal.style.display = 'flex';
+        // 2. Detect WeChat
+        const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
+
+        if (isWeChat) {
+            // WeChat Strategy: Generate Image Immediately
+            const originalBtnContent = generateOrderBtn.innerHTML;
+            generateOrderBtn.disabled = true;
+            generateOrderBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 生成中...';
+
+            const element = document.getElementById('order-sheet-preview');
+            // Temporarily show element off-screen to render it (if it was hidden)
+            // But here it is inside a hidden modal. html2canvas might need it visible or cloned.
+            // Let's use the clone technique we used before.
+            
+            const clone = element.cloneNode(true);
+            clone.style.width = '600px';
+            clone.style.position = 'absolute';
+            clone.style.top = '0';
+            clone.style.left = '-9999px';
+            clone.style.zIndex = '-1';
+            clone.style.height = 'auto';
+            clone.style.background = '#fff'; // Ensure bg
+            document.body.appendChild(clone);
+
+            try {
+                const canvas = await html2canvas(clone, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+                const imgData = canvas.toDataURL('image/png');
+                
+                generatedResultImg.src = imgData;
+                saveResultModal.style.display = 'flex';
+                
+                // Save to DB silently
+                supabase.from('orders').insert({ items: items, total_price: total }).then(()=>{});
+
+            } catch (err) {
+                alert('生成失败');
+                console.error(err);
+            } finally {
+                document.body.removeChild(clone);
+                generateOrderBtn.disabled = false;
+                generateOrderBtn.innerHTML = originalBtnContent;
+            }
+
+        } else {
+            // Standard Strategy: Show HTML Preview
+            orderModal.style.display = 'flex';
+        }
     });
 
     // Save Image
@@ -377,9 +422,20 @@ function setupEventListeners() {
         }).then(canvas => {
             const imgData = canvas.toDataURL('image/png');
             
-            // Show result in modal for Long Press (WeChat compatible)
-            generatedResultImg.src = imgData;
-            saveResultModal.style.display = 'flex';
+            // Detect WeChat
+            const isWeChat = /MicroMessenger/i.test(navigator.userAgent);
+
+            if (isWeChat) {
+                // WeChat: Show modal for Long Press (because it blocks downloads)
+                generatedResultImg.src = imgData;
+                saveResultModal.style.display = 'flex';
+            } else {
+                // All other browsers (PC, Mobile Safari/Chrome): Auto download
+                const link = document.createElement('a');
+                link.download = `烟花订单_${new Date().getTime()}.png`;
+                link.href = imgData;
+                link.click();
+            }
             
             // 4. Cleanup & Restore
             document.body.removeChild(clone);
