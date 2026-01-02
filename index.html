@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>烟花选购平台</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="container header-content">
+      <h1><i class="fa-solid fa-fire"></i> 隆平烟花选购平台</h1>
+      <nav>
+        <button id="view-orders-btn" style="display:none;">查看后台订单</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Control Panel -->
+    <section class="controls">
+      <div class="search-box">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" id="search-input" placeholder="搜索烟花名称...">
+      </div>
+
+      <div class="filters">
+        <select id="sort-select">
+          <option value="default">默认排序</option>
+          <option value="price-asc">价格：低到高</option>
+          <option value="price-desc">价格：高到低</option>
+          <option value="views">热度：浏览量</option>
+          <option value="adds">热度：加购量</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Product Grid -->
+    <section id="product-grid" class="product-grid">
+      <!-- Products will be injected here -->
+      <div class="loading">正在加载烟花数据...</div>
+    </section>
+  </main>
+
+  <!-- Shopping Cart Sidebar -->
+  <aside class="cart-sidebar">
+    <div class="cart-header">
+      <h2><i class="fa-solid fa-clipboard-list"></i> 选货单</h2>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <span id="cart-total-count" class="badge">0</span>
+        <button id="close-cart-btn" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+    <div id="cart-items" class="cart-items">
+      <div class="empty-cart">暂无商品</div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total">
+        <span>总计:</span>
+        <span id="cart-total-price" class="price">¥0.00</span>
+      </div>
+      <div class="cart-actions">
+        <button id="clear-cart-btn" class="btn btn-outline">清空</button>
+        <button id="generate-order-btn" class="btn btn-primary">生成选货单</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Overlay & FAB -->
+  <div id="cart-overlay" class="cart-overlay"></div>
+  <div id="cart-fab" class="cart-fab">
+    <i class="fa-solid fa-cart-shopping"></i>
+    <span id="fab-count" class="badge">0</span>
+  </div>
+
+  <!-- Order Modal -->
+  <div id="order-modal" class="modal" style="display: none; align-items: center; justify-content: center;">
+    <span class="close-modal" onclick="closeAllModals()" style="position: fixed; top: 20px; right: 20px; color: white; z-index: 2000; font-size: 40px; cursor: pointer;">&times;</span>
+    <div class="modal-content" style="display: flex; flex-direction: column; max-height: 90vh; padding: 0; overflow: hidden; width: 95%; max-width: 600px;">
+      
+      <!-- Scrollable Content -->
+      <div style="flex: 1; overflow-y: auto; padding: 20px;">
+        <div id="order-sheet-preview" class="order-sheet" style="margin-bottom: 0;">
+            <div class="sheet-header">
+            <div class="sheet-title" style="width: 100%; text-align: center;">
+                <h2>烟花选购订单</h2>
+                <p>订单编号: <span id="order-id-display"></span></p>
+                <p class="date">日期: <span id="order-date"></span></p>
+            </div>
+            </div>
+            <table class="order-table">
+            <thead>
+                <tr>
+                <th>商品名称</th>
+                <th>单价</th>
+                <th>数量</th>
+                <th>小计</th>
+            </tr>
+            </thead>
+            <tbody id="order-table-body">
+                <!-- Order items -->
+            </tbody>
+            <tfoot>
+                <tr>
+                <td colspan="3" style="text-align: right;"><strong>总计:</strong></td>
+                <td id="order-sheet-total" class="total-price">¥0.00</td>
+                </tr>
+            </tfoot>
+            </table>
+            <div class="sheet-footer">
+            <p>感谢您的订购！</p>
+            </div>
+        </div>
+      </div>
+
+      <!-- Fixed Footer -->
+      <div class="modal-actions" style="padding: 15px; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center; flex-shrink: 0; box-shadow: 0 -4px 10px rgba(0,0,0,0.05); position: relative; z-index: 10;">
+        <button id="save-image-btn" class="btn" style="background-color: #3b82f6; color: white; padding: 12px 40px; font-size: 1.1rem; border-radius: 30px; box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.5);"><i class="fa-solid fa-download"></i> 保存为图片</button>
+      </div>
+    </div>
+  </div>
+
+      <!-- QR Code Modal -->
+      <div id="qr-modal" class="modal">
+          <div class="modal-content qr-content">
+              <span class="close-modal close-qr">&times;</span>
+              <img id="qr-large-img" src="" alt="QR Code">
+              <p id="qr-product-name"></p>
+          </div>
+      </div>
+  
+          <!-- Image Preview Modal -->
+          <div id="image-preview-modal" class="modal">
+              <span id="close-image-preview" class="close-modal" onclick="closeAllModals()" style="position: fixed; top: 20px; right: 20px; color: white; z-index: 2000; font-size: 40px; cursor: pointer;">&times;</span>
+              <div class="modal-content" style="background: transparent; box-shadow: none; border: none; text-align: center; width: 100%; height: 100%; margin: 0; padding: 0; display: flex; align-items: center; justify-content: center; pointer-events: none;">
+                  <img id="preview-large-img" src="" alt="Preview" style="pointer-events: auto; max-width: 95%; max-height: 95%;">
+              </div>
+          </div>      <script src="https://unpkg.com/panzoom@9.4.0/dist/panzoom.min.js"></script>
+      <script type="module" src="app.js"></script>
+  </body>
+  </html>
