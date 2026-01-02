@@ -22,12 +22,20 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
     padding-bottom: 80px; /* Space for mobile cart */
+    overflow-x: hidden; /* Prevent horizontal scroll */
+    width: 100%;
+}
+
+html {
+    overflow-x: hidden;
+    width: 100%;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    width: 100%;
 }
 
 /* Header */
@@ -38,6 +46,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 100;
+    width: 100%;
 }
 
 .header-content {
@@ -49,6 +58,47 @@ header {
 header h1 {
     color: var(--accent-gold);
     font-size: 1.5rem;
+}
+
+/* Location Bar (Marquee) */
+.shop-location {
+    background: #1e293b;
+    color: #cbd5e1;
+    padding: 12px 15px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #334155;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.shop-location:active {
+    background: #334155;
+}
+
+.marquee-wrapper {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent);
+    min-width: 0;
+}
+
+.marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    animation: scroll-left 20s linear infinite;
+}
+
+@keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
 
 /* Controls */
@@ -96,14 +146,51 @@ header h1 {
     gap: 1rem;
     align-items: center;
     flex-wrap: wrap;
+    width: 100%;
+    overflow: hidden; /* Crucial: contain the scrollable child */
 }
 
-select {
-    padding: 10px;
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    color: var(--text-primary);
+/* Sort Chips */
+.sort-chips {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 5px 2px; /* Slight vertical padding */
+    width: 100%;
+    -webkit-overflow-scrolling: touch; /* Smooth scroll */
+    scrollbar-width: none;
+    /* Mask effect to hint scrolling */
+    mask-image: linear-gradient(90deg, #000 90%, transparent);
+}
+
+.sort-chips::-webkit-scrollbar {
+    display: none;
+}
+
+.sort-chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: #334155;
+    color: #cbd5e1;
+    border: 1px solid transparent;
+    font-size: 0.85rem;
+    white-space: nowrap; /* Prevent wrapping */
+    cursor: pointer;
+    transition: all 0.2s;
+    flex-shrink: 0; /* Prevent shrinking */
+    -webkit-tap-highlight-color: transparent; /* Remove mobile tap bg */
+}
+
+.sort-chip:hover {
+    background: #475569;
+}
+
+.sort-chip.active {
+    background: var(--accent-gold);
+    color: #0f172a;
+    font-weight: bold;
+    border-color: var(--accent-gold);
+    box-shadow: 0 2px 4px rgba(251, 191, 36, 0.2);
 }
 
 /* Product Grid */
@@ -112,6 +199,7 @@ select {
     grid-template-columns: repeat(2, 1fr); /* Mobile: 2 columns */
     gap: 10px; /* Smaller gap for mobile */
     padding-bottom: 2rem;
+    width: 100%;
 }
 
 @media (min-width: 640px) {

@@ -13,7 +13,9 @@ let currentCart = JSON.parse(localStorage.getItem('fireworks_cart')) || {};
 // DOM Elements
 const productGrid = document.getElementById('product-grid');
 const searchInput = document.getElementById('search-input');
-const sortSelect = document.getElementById('sort-select');
+const sortChips = document.querySelectorAll('.sort-chip');
+let currentSortType = 'default'; // Global sort state
+
 const cartItemsContainer = document.getElementById('cart-items');
 const cartTotalCount = document.getElementById('cart-total-count');
 const cartTotalPrice = document.getElementById('cart-total-price');
@@ -51,7 +53,6 @@ async function init() {
 // 2. Load Data
 async function loadAndRenderProducts() {
     // Keep skeleton visible while loading
-    // productGrid.innerHTML = '<div class="loading">正在加载烟花数据...</div>';
 
     try {
         // Fetch products with their stats
@@ -165,7 +166,7 @@ async function incrementViewCount(id) {
         if (cardStat) cardStat.innerHTML = `<i class="fa-regular fa-eye"></i> ${product.view_count}`;
 
         // If currently sorting by views, refresh grid to reflect new ranking
-        if (sortSelect.value === 'views') {
+        if (currentSortType === 'views') {
             filterProducts();
         }
     }
@@ -203,7 +204,7 @@ window.addToCart = async function(id) {
     if (cardStat) cardStat.innerHTML = `<i class="fa-solid fa-cart-plus"></i> ${product.cart_add_count}`;
 
     // If currently sorting by adds, refresh grid to reflect new ranking
-    if (sortSelect.value === 'adds') {
+    if (currentSortType === 'adds') {
         filterProducts();
     }
 
@@ -289,7 +290,19 @@ function setupEventListeners() {
     });
 
     searchInput.addEventListener('input', filterProducts);
-    sortSelect.addEventListener('change', filterProducts);
+
+    // Sort Chips Logic
+    sortChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            // Update active state
+            sortChips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            
+            // Update sort type and refilter
+            currentSortType = chip.dataset.sort;
+            filterProducts();
+        });
+    });
 
     // Mobile Cart Toggles
     if (cartFab) cartFab.addEventListener('click', () => toggleCart(true));
@@ -454,7 +467,7 @@ function setupEventListeners() {
 // Search & Filter
 function filterProducts() {
     const term = searchInput.value.toLowerCase();
-    const sortType = sortSelect.value;
+    const sortType = currentSortType;
 
     let filtered = allProducts.filter(p => {
         return p.name.toLowerCase().includes(term);
@@ -485,6 +498,23 @@ function filterProducts() {
 }
 
 // Modals Logic
+window.openMap = function() {
+    const addressKeyword = "南通市通州区隆平超市";
+    const encodedKeyword = encodeURIComponent(addressKeyword);
+    
+    // Detect Mobile
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        // Mobile: Use Amap URI Search API (Reliable for keywords)
+        window.location.href = `https://uri.amap.com/search?keyword=${encodedKeyword}&src=fireworks_shop&callnative=1`;
+    } else {
+        // PC: Use Baidu Map Deep Link (Forces search execution)
+        // s=s&wd=KEYWORD triggers the search box logic directly
+        window.open(`https://map.baidu.com/?newmap=1&s=s%26wd%3D${encodedKeyword}&c=161`, '_blank');
+    }
+};
+
 window.openQrModal = function(filename, name) {
     qrLargeImg.src = filename || 'https://via.placeholder.com/200?text=QR';
     qrProductName.textContent = name;

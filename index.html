@@ -22,6 +22,16 @@
     </div>
   </header>
 
+  <div class="shop-location" onclick="openMap()">
+      <i class="fa-solid fa-location-dot" style="color: #ef4444; z-index: 2;"></i>
+      <div class="marquee-wrapper">
+          <div class="marquee-content">江苏省南通市通州区苴东路与苴平路交叉口西北140米（隆平超市） &nbsp;&nbsp;&nbsp;&nbsp; 江苏省南通市通州区苴东路与苴平路交叉口西北140米（隆平超市）</div>
+      </div>
+      <div style="display: flex; align-items: center; gap: 4px; color: #3b82f6; font-weight: bold; flex-shrink: 0; z-index: 2;">
+          <i class="fa-solid fa-location-arrow"></i> 导航
+      </div>
+  </div>
+
   <main class="container">
     <section class="controls">
       <div class="search-box">
@@ -30,13 +40,13 @@
       </div>
 
       <div class="filters">
-        <select id="sort-select">
-          <option value="default">默认排序</option>
-          <option value="price-asc">价格：低到高</option>
-          <option value="price-desc">价格：高到低</option>
-          <option value="views">热度：浏览量</option>
-          <option value="adds">热度：加购量</option>
-        </select>
+        <div id="sort-chips" class="sort-chips">
+            <button class="sort-chip active" data-sort="default">综合推荐</button>
+            <button class="sort-chip" data-sort="adds">大家都在买</button>
+            <button class="sort-chip" data-sort="views">热门浏览</button>
+            <button class="sort-chip" data-sort="price-asc">价格 <i class="fa-solid fa-arrow-up-long"></i></button>
+            <button class="sort-chip" data-sort="price-desc">价格 <i class="fa-solid fa-arrow-down-long"></i></button>
+        </div>
       </div>
     </section>
 
