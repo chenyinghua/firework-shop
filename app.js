@@ -88,12 +88,12 @@ function renderProductGrid(products) {
 
     productGrid.innerHTML = products.map(product => {
         // Build relative paths
-        const imagePath = product.image_filename ? `./image/commodity/${product.image_filename}` : 'https://via.placeholder.com/300x200?text=Fireworks';
+        const imagePath = product.image_filename ? `/image/commodity/${product.image_filename}` : 'https://via.placeholder.com/300x200?text=Fireworks';
         
         // Conditional QR Code
         let qrHtml = '';
         if (product.qr_filename) {
-            const qrPath = `./image/code/${product.qr_filename}`;
+            const qrPath = `/image/code/${product.qr_filename}`;
             qrHtml = `<i class="fa-solid fa-qrcode qr-icon" onclick="openQrModal('${qrPath}', '${product.name}')"></i>`;
         }
 
@@ -231,7 +231,7 @@ function renderCart() {
         cartItemsContainer.innerHTML = items.map(item => {
             // Handle existing cart items that might not have image_filename stored yet
             const imagePath = item.image_filename 
-                ? `./image/commodity/${item.image_filename}` 
+                ? `/image/commodity/${item.image_filename}` 
                 : 'https://via.placeholder.com/80?text=FW';
 
             return `
