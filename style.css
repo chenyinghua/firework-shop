@@ -17,7 +17,7 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', Arial, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-primary);
     line-height: 1.6;
@@ -123,7 +123,7 @@ select {
 
 .product-card {
     background-color: var(--card-bg);
-    border-radius: 8px; /* Slightly smaller radius for mobile */
+    border-radius: 8px;
     overflow: hidden;
     border: 1px solid var(--border-color);
     transition: transform 0.2s;
@@ -159,7 +159,7 @@ select {
     top: 5px;
     right: 5px;
     background: rgba(0,0,0,0.6);
-    padding: 8px; /* Larger hit area */
+    padding: 8px;
     border-radius: 4px;
     cursor: pointer;
     color: white;
@@ -167,20 +167,20 @@ select {
 }
 
 .card-body {
-    padding: 10px; /* Reduced padding for mobile */
+    padding: 10px;
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
 .card-title {
-    font-size: 1rem; /* Smaller font for mobile */
+    font-size: 1rem;
     margin-bottom: 0.5rem;
     color: var(--text-primary);
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limit to 2 lines */
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 }
 
@@ -195,7 +195,7 @@ select {
 
 .card-footer {
     display: flex;
-    flex-direction: column; /* Stack on mobile */
+    flex-direction: column;
     gap: 5px;
     margin-top: 0.5rem;
 }
@@ -230,14 +230,6 @@ select {
     font-size: 0.9rem;
 }
 
-/* Image Preview Modal */
-#preview-large-img {
-    max-width: 100%;
-    max-height: 80vh;
-    display: block;
-    margin: 0 auto;
-}
-
 .btn:hover {
     opacity: 0.9;
 }
@@ -245,7 +237,7 @@ select {
 .btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-    background-color: #94a3b8 !important; /* Force grey background */
+    background-color: #94a3b8 !important;
 }
 
 .btn-primary {
@@ -270,7 +262,7 @@ select {
     right: 0;
     top: 0;
     bottom: 0;
-    width: 85%; /* Mobile width */
+    width: 85%;
     max-width: 350px;
     background-color: #1e293b;
     border-left: 1px solid var(--border-color);
@@ -550,12 +542,11 @@ select {
     margin-bottom: 20px;
     border: 1px solid #e2e8f0;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    font-family: 'Helvetica Neue', Arial, sans-serif; /* Cleaner font for receipt */
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     color: #1e293b;
     position: relative;
 }
 
-/* Receipt decoration top */
 .order-sheet::before {
     content: '';
     position: absolute;
@@ -622,7 +613,6 @@ select {
     border-bottom: none;
 }
 
-/* Align numbers to right */
 .order-table th:nth-child(2),
 .order-table td:nth-child(2),
 .order-table th:nth-child(4),
@@ -662,14 +652,22 @@ select {
 
 #qr-large-img {
     width: 100%;
-    max-width: 18rem; /* Approx 288px, responsive */
+    max-width: 18rem;
     height: auto;
     aspect-ratio: 1 / 1;
     object-fit: contain;
     margin-bottom: 1rem;
-    background-color: #fff; /* White bg for better scanning contrast */
+    background-color: #fff;
     padding: 10px;
     border-radius: 8px;
+}
+
+/* Image Preview Modal */
+#preview-large-img {
+    max-width: 100%;
+    max-height: 80vh;
+    display: block;
+    margin: 0 auto;
 }
 
 /* Loading */
@@ -684,4 +682,39 @@ select {
     text-align: center;
     color: var(--text-secondary);
     padding: 2rem 0;
+}
+
+/* Skeleton Loading */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.skeleton {
+    background: #334155;
+    background-image: linear-gradient(
+        90deg, 
+        #334155 0px, 
+        #475569 40px, 
+        #334155 80px
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.skeleton-text {
+    height: 1rem;
+    margin-bottom: 0.5rem;
+    width: 80%;
+}
+
+.skeleton-img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
 }

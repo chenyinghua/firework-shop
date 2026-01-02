@@ -48,7 +48,8 @@ async function init() {
 
 // 2. Load Data
 async function loadAndRenderProducts() {
-    productGrid.innerHTML = '<div class="loading">正在加载烟花数据...</div>';
+    // Keep skeleton visible while loading
+    // productGrid.innerHTML = '<div class="loading">正在加载烟花数据...</div>';
 
     try {
         // Fetch products with their stats
@@ -100,7 +101,7 @@ function renderProductGrid(products) {
         return `
         <div class="product-card" data-id="${product.id}">
             <div class="card-img-wrapper">
-                <img src="${imagePath}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
+                <img src="${imagePath}" alt="${product.name}" loading="lazy" decoding="async" onerror="this.src='https://via.placeholder.com/300x200?text=No+Image'">
                 ${qrHtml}
             </div>
             <div class="card-body">
