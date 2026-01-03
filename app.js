@@ -107,7 +107,7 @@ function renderProductGrid(products) {
         let qrHtml = '';
         if (product.qr_filename) {
             const qrPath = `/image/code/${product.qr_filename}`;
-            qrHtml = `<i class="fa-solid fa-qrcode qr-icon" onclick="openQrModal('${qrPath}', '${product.name}')"></i>`;
+            qrHtml = `<i class="fa-solid fa-qrcode qr-icon" onclick="openQrModal('${qrPath}', '${product.name}', ${product.id})"></i>`;
         }
 
         return `
@@ -141,9 +141,18 @@ function renderProductGrid(products) {
             
             // Open Preview
             if (previewLargeImg && imagePreviewModal) {
+                previewLargeImg.style.opacity = '0'; // Hide until new image loads
                 previewLargeImg.src = src;
                 previewLargeImg.style.transform = ''; // Reset transform
                 imagePreviewModal.style.display = 'block';
+
+                previewLargeImg.onload = () => {
+                    previewLargeImg.style.opacity = '1';
+                };
+                // Handle cached case
+                if (previewLargeImg.complete && previewLargeImg.naturalWidth > 0) {
+                    previewLargeImg.style.opacity = '1';
+                }
                 
                 // Initialize Panzoom
                 if (window.panzoom) {
@@ -535,10 +544,15 @@ window.openMap = function() {
     }
 };
 
-window.openQrModal = function(filename, name) {
+window.openQrModal = function(filename, name, id) {
     qrLargeImg.src = filename || 'https://via.placeholder.com/200?text=QR';
     qrProductName.textContent = name;
     qrModal.style.display = 'block';
+
+    // Increment View Count when QR code is viewed
+    if (id) {
+        incrementViewCount(id);
+    }
 };
 
 window.closeAllModals = function() {
