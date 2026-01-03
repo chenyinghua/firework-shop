@@ -55,6 +55,17 @@ header {
     align-items: center;
 }
 
+.title-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.subtitle {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.2rem;
+}
+
 header h1 {
     color: var(--accent-gold);
     font-size: 1.5rem;
