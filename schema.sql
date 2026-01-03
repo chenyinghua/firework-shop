@@ -120,11 +120,14 @@ INSERT INTO products (name, price, unit, image_filename, qr_filename) VALUES
 ('霹雳风暴', 0.00, '盒', 'commodity(69).png', 'code69.png'),
 ('烟花弹', 0.00, '把', 'commodity(70).png', NULL),
 ('超级火箭（窜天猴）', 0.00, '把', 'commodity(71).png', 'code71.png'),
-('音乐蓝色海洋（蓝火）', 0.00, '根', 'commodity(72)', 'code72.png'),
-('连发火箭炮', 0.00, '盒', 'commodity(73)', 'code73.png'),
-('DF-5C加特林', 0.00, '盒', 'commodity(74)', 'code74.png'),
-('迷你加特林', 0.00, '盒', 'commodity(75)', 'code75.png'),
-('炫彩魔方', 0.00, '盒', 'commodity(76)', 'code76.png');
+('音乐蓝色海洋（蓝火）', 0.00, '根', 'commodity(72).png', 'code72.png'),
+('连发火箭炮', 0.00, '盒', 'commodity(73).png', 'code73.png'),
+('DF-5C加特林', 0.00, '盒', 'commodity(74).png', 'code74.png'),
+('迷你加特林', 0.00, '盒', 'commodity(75).png', 'code75.png'),
+('炫彩魔方', 0.00, '盒', 'commodity(76).png', 'code76.png'),
+('摇钱树', 25.00, '盒', 'commodity(77).png', 'code77.png'),
+('招财进宝', 35.00, '盒', 'commodity(78).png', NULL),
+('百花报春', 120.00, '盒', 'commodity(79).png', 'code79.png');
 
 -- 初始化统计表
 INSERT INTO product_stats (id, view_count, cart_add_count)
