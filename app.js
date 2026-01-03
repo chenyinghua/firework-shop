@@ -33,6 +33,7 @@ const imagePreviewModal = document.getElementById('image-preview-modal');
 const previewLargeImg = document.getElementById('preview-large-img');
 const saveResultModal = document.getElementById('save-result-modal');
 const generatedResultImg = document.getElementById('generated-result-img');
+const previewLoading = document.getElementById('preview-loading');
 let imgPanzoom = null;
 
 // Mobile Cart Elements
@@ -44,7 +45,6 @@ const fabCount = document.getElementById('fab-count');
 
 // 1. Initialization
 async function init() {
-    console.log('App Initializing...');
     await loadAndRenderProducts();
     renderCart();
     setupEventListeners();
@@ -141,16 +141,26 @@ function renderProductGrid(products) {
             
             // Open Preview
             if (previewLargeImg && imagePreviewModal) {
+                if (previewLoading) previewLoading.style.display = 'block';
                 previewLargeImg.style.opacity = '0'; // Hide until new image loads
-                previewLargeImg.src = src;
                 previewLargeImg.style.transform = ''; // Reset transform
-                imagePreviewModal.style.display = 'block';
-
+                
+                // Set handlers before src
                 previewLargeImg.onload = () => {
+                    if (previewLoading) previewLoading.style.display = 'none';
                     previewLargeImg.style.opacity = '1';
                 };
-                // Handle cached case
+                
+                previewLargeImg.onerror = () => {
+                    if (previewLoading) previewLoading.style.display = 'none';
+                };
+
+                previewLargeImg.src = src;
+                imagePreviewModal.style.display = 'block';
+
+                // Handle cached case (in case it loaded instantly or was already cached)
                 if (previewLargeImg.complete && previewLargeImg.naturalWidth > 0) {
+                    if (previewLoading) previewLoading.style.display = 'none';
                     previewLargeImg.style.opacity = '1';
                 }
                 
